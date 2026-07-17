@@ -1,0 +1,8 @@
+This creates an Express application. You use it to define routes and middleware:--
+const express = require("express");
+const app = express();
+app.listen() internally creates an HTTP server for you.
+
+const https = require("https");
+const server = https.createServer(options, app);
+This creates an actual HTTPS server using Node.js. You still need an Express app as the request handler:
