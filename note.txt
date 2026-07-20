@@ -11,3 +11,36 @@ This creates an actual HTTPS server using Node.js. You still need an Express app
 Remove-Item -Recurse -Force .git
 
 This removes only the accidental Git repository information. It does not delete your Desktop files.
+
+ type: String,
+      required: true,
+      trim: true,
+      minlength: 3,
+      maxlength: 30,
+       enum: {
+    values: ["user", "admin"],
+    message: "{VALUE} is not a valid role",
+  },
+   type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+         type: [String],
+         enum: ["online", "offline", "busy"],
+      default: "offline",
+      default: true,
+       unique: true,
+      lowercase: true,
+       type: String,
+      required: true
+
+npm install nodemon---This downloads nodemon into your project.
+npx checks whether nodemon is installed locally. If not, it may temporarily download it, run it, and then use the cached version later.
+select controls whether a field is included when you fetch data from MongoDB.
+methods--It is called on an individual user document:
+statics-- It is called directly on the model:It does not require an existing user document.
+
+Mongoose does provide some built-in methods, such as:
+user.save();
+user.deleteOne();
+User.findOne();
+User.findById();
+User.create();
