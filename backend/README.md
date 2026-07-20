@@ -73,4 +73,194 @@ If the submitted data is invalid, the API returns HTTP status `400 Bad Request`.
 
 Returned when one or more request fields fail validation.
 
+#### `400 Bad Request` (Email already registered)
+
+Returned when attempting to register with an email that already exists in the database.
+
+```json
+{
+  "message": "Email already registered"
+}
+```
+
+---
+
+## Login a user
+
+Authenticates a user with their email and password, and returns a JWT authentication token.
+
+### Endpoint
+
+```http
+POST /users/login
+```
+
+### Headers
+
+```http
+Content-Type: application/json
+```
+
+### Request Body
+
+| Field | Type | Required | Validation |
+| --- | --- | --- | --- |
+| `email` | String | Yes | Must be a valid email address. |
+| `password` | String | Yes | Must contain at least 6 characters. |
+
+Example request body:
+
+```json
+{
+  "email": "rishabh@example.com",
+  "password": "password123"
+}
+```
+
+### How the response is returned
+
+#### `200 OK`
+
+When login succeeds, the API returns HTTP status `200 OK`. The JSON response contains:
+
+- `token`: a JWT that can be used to authenticate the user.
+- `user`: the user's information.
+
+```json
+{
+  "token": "<jwt-token>",
+  "user": {
+    "_id": "<user-id>",
+    "FullName": {
+      "FirstName": "rishabh",
+      "LastName": "gupta"
+    },
+    "email": "rishabh@example.com",
+    "createdAt": "<timestamp>",
+    "updatedAt": "<timestamp>"
+  }
+}
+```
+
+### Error responses
+
+#### `401 Unauthorized`
+
+Returned when the email or password is incorrect.
+
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+#### `400 Bad Request`
+
+Returned when one or more request fields fail validation.
+
+---
+
+## Get user profile
+
+Retrieves the authenticated user's profile information.
+
+### Endpoint
+
+```http
+GET /users/profile
+```
+
+### Headers
+
+```http
+Authorization: Bearer <token>
+```
+
+or
+
+```http
+Cookie: token=<token>
+```
+
+### How the response is returned
+
+#### `200 OK`
+
+When the request succeeds, the API returns HTTP status `200 OK` with the user's profile information.
+
+```json
+{
+  "_id": "<user-id>",
+  "FullName": {
+    "FirstName": "rishabh",
+    "LastName": "gupta"
+  },
+  "email": "rishabh@example.com",
+  "createdAt": "<timestamp>",
+  "updatedAt": "<timestamp>"
+}
+```
+
+### Error responses
+
+#### `401 Unauthorized`
+
+Returned when the authentication token is missing, invalid, or expired.
+
+```json
+{
+  "message": "UnAuthorized"
+}
+```
+
+---
+
+## Logout user
+
+Logs out the authenticated user by clearing the authentication token and adding it to a blacklist.
+
+### Endpoint
+
+```http
+GET /users/logout
+```
+
+### Headers
+
+```http
+Authorization: Bearer <token>
+```
+
+or
+
+```http
+Cookie: token=<token>
+```
+
+### How the response is returned
+
+#### `200 OK`
+
+When logout succeeds, the API returns HTTP status `200 OK`.
+
+```json
+{
+  "message": "logged out"
+}
+```
+
+### Error responses
+
+#### `401 Unauthorized`
+
+Returned when the authentication token is missing, invalid, or expired.
+
+```json
+{
+  "message": "UnAuthorized"
+}
+```
+
+---
+
 Replace `3000` with the port configured for the backend server if it uses a different port.

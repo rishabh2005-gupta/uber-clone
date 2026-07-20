@@ -44,3 +44,6 @@ user.deleteOne();
 User.findOne();
 User.findById();
 User.create();
+
+res.status(200).json({token,user});--res.cookie(name, value, options);
+token is passed as cookie 

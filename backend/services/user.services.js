@@ -9,6 +9,15 @@ module.exports.createUser = async ({
   if (!FirstName || !email || !password) {
     throw new Error("all fields are required");
   }
+  
+  // Check if user already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    const error = new Error("Email already registered");
+    error.statusCode = 400;
+    throw error;
+  }
+  
   const user = await User.create({
     FullName: {
       FirstName,
