@@ -263,4 +263,414 @@ Returned when the authentication token is missing, invalid, or expired.
 
 ---
 
+# Captain API
+
+## Register a captain
+
+Creates a new captain account, hashes the supplied password, stores the captain in the database with vehicle details, and returns a JWT authentication token.
+
+### Endpoint
+
+```http
+POST /captains/register
+```
+
+### Headers
+
+```http
+Content-Type: application/json
+```
+
+### Request Body
+
+| Field | Type | Required | Validation |
+| --- | --- | --- | --- |
+| `FullName` | Object | Yes | Contains the captain's name fields. |
+| `FullName.FirstName` | String | Yes | Must contain at least 3 characters. |
+| `FullName.LastName` | String | No | If supplied, must contain at least 3 characters. |
+| `email` | String | Yes | Must be a valid email address. |
+| `password` | String | Yes | Must contain at least 6 characters. |
+| `vehicle` | Object | Yes | Contains vehicle details. |
+| `vehicle.color` | String | Yes | Must contain at least 3 characters. |
+| `vehicle.plate` | String | Yes | Must contain at least 3 characters. |
+| `vehicle.capacity` | Number | Yes | Must be at least 1. |
+| `vehicle.vehicleType` | String | Yes | Must be one of: 'car', 'motorcycle', 'auto'. |
+
+Example request body (JSON with inline comments explaining requirements):
+
+```jsonc
+{
+  // FullName object (required)
+  "FullName": {
+    // FirstName: required, minimum 3 characters after trimming
+    "FirstName": "John",
+    // LastName: optional, if supplied must be minimum 3 characters
+    "LastName": "Doe"
+  },
+
+  // email: required, must be a valid email address
+  "email": "john@example.com",
+
+  // password: required, minimum length 6
+  "password": "password123",
+
+  // vehicle object (required)
+  "vehicle": {
+    // color: required, minimum 3 characters
+    "color": "blue",
+    // plate: required, minimum 3 characters
+    "plate": "ABC123",
+    // capacity: required, numeric, >= 1
+    "capacity": 4,
+    // vehicleType: required, one of 'car', 'motorcycle', 'auto'
+    "vehicleType": "car"
+  }
+}
+```
+
+### How the response is returned
+
+#### `201 Created`
+
+When registration succeeds, the API returns HTTP status `201 Created` with:
+
+- `token`: a JWT that can be used to authenticate the captain.
+- `captain`: the newly created captain's information.
+
+```json
+{
+  "token": "<jwt-token>",
+  "captain": {
+    "_id": "<captain-id>",
+    "FullName": {
+      "FirstName": "John",
+      "LastName": "Doe"
+    },
+    "email": "john@example.com",
+    "vehicle": {
+      "color": "blue",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": {
+      "isActive": "inactive"
+    },
+    "createdAt": "<timestamp>",
+    "updatedAt": "<timestamp>"
+  }
+}
+```
+
+```jsonc
+{
+  // Authentication token for subsequent requests. Store as cookie or Authorization header.
+  "token": "<jwt-token>",
+
+  // Created captain object
+  "captain": {
+    // MongoDB document id
+    "_id": "<captain-id>",
+
+    // FullName object
+    "FullName": {
+      // FirstName: string
+      "FirstName": "John",
+      // LastName: string
+      "LastName": "Doe"
+    },
+
+    // Registered email (unique)
+    "email": "john@example.com",
+
+    // Vehicle details
+    "vehicle": {
+      // color: string
+      "color": "blue",
+      // plate: string
+      "plate": "ABC123",
+      // capacity: number
+      "capacity": 4,
+      // vehicleType: enum ['car','motorcycle','auto']
+      "vehicleType": "car"
+    },
+
+    // status object
+    "status": {
+      // isActive currently defaults to 'inactive' until activated
+      "isActive": "inactive"
+    },
+
+    // Timestamps
+    "createdAt": "<timestamp>",
+    "updatedAt": "<timestamp>"
+  }
+}
+```
+
+### Error responses
+
+#### `400 Bad Request`
+
+Returned when one or more request fields fail validation or if the email is already registered.
+
+```json
+{
+  "message": "captain already exist"
+}
+```
+
+---
+
+## Login a captain
+
+Authenticates a captain with their email and password, and returns a JWT authentication token.
+
+### Endpoint
+
+```http
+POST /captains/login
+```
+
+### Headers
+
+```http
+Content-Type: application/json
+```
+
+### Request Body
+
+| Field | Type | Required | Validation |
+| --- | --- | --- | --- |
+| `email` | String | Yes | Must be a valid email address. |
+| `password` | String | Yes | Must contain at least 6 characters. |
+
+Example request body:
+
+```json
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+```jsonc
+{
+  // email: required, must be a valid email
+  "email": "john@example.com",
+
+  // password: required, minimum 6 characters
+  "password": "password123"
+}
+```
+
+### How the response is returned
+
+#### `200 OK`
+
+When login succeeds, the API returns HTTP status `200 OK` with:
+
+- `token`: a JWT that can be used to authenticate the captain.
+- `captain`: the captain's information.
+
+```json
+{
+  "token": "<jwt-token>",
+  "captain": {
+    "_id": "<captain-id>",
+    "FullName": {
+      "FirstName": "John",
+      "LastName": "Doe"
+    },
+    "email": "john@example.com",
+    "vehicle": {
+      "color": "blue",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": {
+      "isActive": "inactive"
+    },
+    "createdAt": "<timestamp>",
+    "updatedAt": "<timestamp>"
+  }
+}
+```
+
+```jsonc
+{
+  // Authentication token
+  "token": "<jwt-token>",
+
+  // Logged-in captain object
+  "captain": {
+    "_id": "<captain-id>",
+    "FullName": { "FirstName": "John", "LastName": "Doe" },
+    "email": "john@example.com",
+    "vehicle": { "color": "blue", "plate": "ABC123", "capacity": 4, "vehicleType": "car" },
+    "status": { "isActive": "inactive" },
+    "createdAt": "<timestamp>",
+    "updatedAt": "<timestamp>"
+  }
+}
+```
+
+### Error responses
+
+#### `401 Unauthorized`
+
+Returned when the email or password is incorrect.
+
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+#### `400 Bad Request`
+
+Returned when one or more request fields fail validation.
+
+---
+
+## Get captain profile
+
+Retrieves the authenticated captain's profile information.
+
+### Endpoint
+
+```http
+GET /captains/profile
+```
+
+### Headers
+
+```http
+Authorization: Bearer <token>
+```
+
+or
+
+```http
+Cookie: token=<token>
+```
+
+### How the response is returned
+
+#### `200 OK`
+
+When the request succeeds, the API returns HTTP status `200 OK` with the captain's profile information.
+
+```json
+{
+  "captain": {
+    "_id": "<captain-id>",
+    "FullName": {
+      "FirstName": "John",
+      "LastName": "Doe"
+    },
+    "email": "john@example.com",
+    "vehicle": {
+      "color": "blue",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": {
+      "isActive": "inactive"
+    },
+    "createdAt": "<timestamp>",
+    "updatedAt": "<timestamp>"
+  }
+}
+```
+
+```jsonc
+{
+  // Captain profile object returned for authenticated requests
+  "captain": {
+    "_id": "<captain-id>",
+    "FullName": {
+      // FirstName: string
+      "FirstName": "John",
+      // LastName: string
+      "LastName": "Doe"
+    },
+    "email": "john@example.com",
+    "vehicle": {
+      "color": "blue",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "status": { "isActive": "inactive" },
+    "createdAt": "<timestamp>",
+    "updatedAt": "<timestamp>"
+  }
+}
+```
+
+### Error responses
+
+#### `401 Unauthorized`
+
+Returned when the authentication token is missing, invalid, or expired.
+
+```json
+{
+  "message": "Unauthorized"
+}
+```
+
+---
+
+## Logout captain
+
+Logs out the authenticated captain by clearing the authentication token and adding it to a blacklist.
+
+### Endpoint
+
+```http
+GET /captains/logout
+```
+
+### Headers
+
+```http
+Authorization: Bearer <token>
+```
+
+or
+
+```http
+Cookie: token=<token>
+```
+
+### How the response is returned
+
+#### `200 OK`
+
+When logout succeeds, the API returns HTTP status `200 OK`.
+
+```json
+{
+  "message": "Logout successfully"
+}
+```
+
+### Error responses
+
+#### `401 Unauthorized`
+
+Returned when the authentication token is missing, invalid, or expired.
+
+```json
+{
+  "message": "Unauthorized"
+}
+```
+
+---
+
 Replace `3000` with the port configured for the backend server if it uses a different port.

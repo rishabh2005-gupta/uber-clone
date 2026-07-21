@@ -1,4 +1,5 @@
-const User = require("../models/users");
+const dotenv = require("dotenv");
+const userModel = require("../models/users");
 
 module.exports.createUser = async ({
   FirstName,
@@ -11,14 +12,14 @@ module.exports.createUser = async ({
   }
   
   // Check if user already exists
-  const existingUser = await User.findOne({ email });
+  const existingUser = await userModel.findOne({ email });
   if (existingUser) {
     const error = new Error("Email already registered");
     error.statusCode = 400;
     throw error;
   }
   
-  const user = await User.create({
+  const user = await userModel.create({
     FullName: {
       FirstName,
       LastName,
@@ -27,4 +28,5 @@ module.exports.createUser = async ({
     password,
   });
   return user;
-};
+};dotenv.config();
+
