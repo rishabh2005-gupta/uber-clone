@@ -47,3 +47,5 @@ User.create();
 
 res.status(200).json({token,user});--res.cookie(name, value, options);
 token is passed as cookie 
+
+A linter is a tool that checks your code for errors, bad practices, style issues, and potential bugs without running the code.
