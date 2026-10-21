@@ -1,13 +1,12 @@
-const dotenv = require("dotenv");
 const userModel = require("../models/users");
 
 module.exports.createUser = async ({
-  FirstName,
-  LastName,
+  firstname,
+  lastname,
   email,
   password,
 }) => {
-  if (!FirstName || !email || !password) {
+  if (!firstname || !email || !password) {
     throw new Error("all fields are required");
   }
   
@@ -20,13 +19,13 @@ module.exports.createUser = async ({
   }
   
   const user = await userModel.create({
-    FullName: {
-      FirstName,
-      LastName,
+    fullname: {
+      firstname,
+      lastname,
     },
     email,
     password,
   });
   return user;
-};dotenv.config();
+};
 

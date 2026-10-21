@@ -3,13 +3,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const userSchema = new mongoose.Schema(
   {
-    FullName: {
-      FirstName: {
+    fullname: {
+      firstname: {
         type: String,
         required: true,
         minlength: [3, "First name must be at least 3 Character"],
       },
-      LastName: {
+      lastname: {
         type: String,
         minlength: [3, "Last name must be at least 3 Character"],
       },
@@ -31,6 +31,12 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: {
+      transform: (_document, user) => {
+        delete user.password;
+        return user;
+      },
+    },
   },
 );
 userSchema.methods.generateAuthToken =function(){

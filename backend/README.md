@@ -22,9 +22,9 @@ Send a `POST` request to `/users/register` with the `Content-Type` header set to
 
 | Field | Type | Required | Validation |
 | --- | --- | --- | --- |
-| `FullName` | Object | Yes | Contains the user's name fields. |
-| `FullName.FirstName` | String | Yes | Must contain at least 3 characters after trimming. |
-| `FullName.LastName` | String | No | If supplied, must contain at least 3 characters after trimming. An empty value is ignored. |
+| `fullname` | Object | Yes | Contains the user's name fields. |
+| `fullname.firstname` | String | Yes | Must contain at least 3 characters after trimming. |
+| `fullname.lastname` | String | No | If supplied, must contain at least 3 characters after trimming. An empty value is ignored. |
 | `email` | String | Yes | Must be a valid email address. |
 | `password` | String | Yes | Must contain at least 6 characters. |
 
@@ -32,12 +32,12 @@ Example request body:
 
 ```json
 {
-  "FullName": {
-    "FirstName":,
-    "LastName"
+  "fullname": {
+    "firstname": "Rishabh",
+    "lastname": "Gupta"
   },
-  "email":,
-  "password":
+  "email": "rishabh@example.com",
+  "password": "password123"
 }
 ```
 ### How the response is returned
@@ -54,9 +54,9 @@ When registration succeeds, the API returns HTTP status `201 Created`. The JSON 
   "token": "<jwt-token>",
   "user": {
     "_id": "<user-id>",
-    "FullName": {
-      "FirstName": "rishabh",
-      "LastName": "gupta"
+    "fullname": {
+      "firstname": "rishabh",
+      "lastname": "gupta"
     },
     "email": "rishabh@example.com",
     "createdAt": "<timestamp>",
@@ -131,9 +131,9 @@ When login succeeds, the API returns HTTP status `200 OK`. The JSON response con
   "token": "<jwt-token>",
   "user": {
     "_id": "<user-id>",
-    "FullName": {
-      "FirstName": "rishabh",
-      "LastName": "gupta"
+    "fullname": {
+      "firstname": "rishabh",
+      "lastname": "gupta"
     },
     "email": "rishabh@example.com",
     "createdAt": "<timestamp>",
@@ -191,9 +191,9 @@ When the request succeeds, the API returns HTTP status `200 OK` with the user's 
 ```json
 {
   "_id": "<user-id>",
-  "FullName": {
-    "FirstName": "rishabh",
-    "LastName": "gupta"
+  "fullname": {
+    "firstname": "rishabh",
+    "lastname": "gupta"
   },
   "email": "rishabh@example.com",
   "createdAt": "<timestamp>",
@@ -285,9 +285,9 @@ Content-Type: application/json
 
 | Field | Type | Required | Validation |
 | --- | --- | --- | --- |
-| `FullName` | Object | Yes | Contains the captain's name fields. |
-| `FullName.FirstName` | String | Yes | Must contain at least 3 characters. |
-| `FullName.LastName` | String | No | If supplied, must contain at least 3 characters. |
+| `fullname` | Object | Yes | Contains the captain's name fields. |
+| `fullname.firstname` | String | Yes | Must contain at least 3 characters. |
+| `fullname.lastname` | String | No | If supplied, must contain at least 3 characters. |
 | `email` | String | Yes | Must be a valid email address. |
 | `password` | String | Yes | Must contain at least 6 characters. |
 | `vehicle` | Object | Yes | Contains vehicle details. |
@@ -300,12 +300,12 @@ Example request body (JSON with inline comments explaining requirements):
 
 ```jsonc
 {
-  // FullName object (required)
-  "FullName": {
-    // FirstName: required, minimum 3 characters after trimming
-    "FirstName": "John",
-    // LastName: optional, if supplied must be minimum 3 characters
-    "LastName": "Doe"
+  // fullname object (required)
+  "fullname": {
+    // firstname: required, minimum 3 characters after trimming
+    "firstname": "John",
+    // lastname: optional, if supplied must be minimum 3 characters
+    "lastname": "Doe"
   },
 
   // email: required, must be a valid email address
@@ -342,9 +342,9 @@ When registration succeeds, the API returns HTTP status `201 Created` with:
   "token": "<jwt-token>",
   "captain": {
     "_id": "<captain-id>",
-    "FullName": {
-      "FirstName": "John",
-      "LastName": "Doe"
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
     },
     "email": "john@example.com",
     "vehicle": {
@@ -372,12 +372,12 @@ When registration succeeds, the API returns HTTP status `201 Created` with:
     // MongoDB document id
     "_id": "<captain-id>",
 
-    // FullName object
-    "FullName": {
-      // FirstName: string
-      "FirstName": "John",
-      // LastName: string
-      "LastName": "Doe"
+    // fullname object
+    "fullname": {
+      // firstname: string
+      "firstname": "John",
+      // lastname: string
+      "lastname": "Doe"
     },
 
     // Registered email (unique)
@@ -478,9 +478,9 @@ When login succeeds, the API returns HTTP status `200 OK` with:
   "token": "<jwt-token>",
   "captain": {
     "_id": "<captain-id>",
-    "FullName": {
-      "FirstName": "John",
-      "LastName": "Doe"
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
     },
     "email": "john@example.com",
     "vehicle": {
@@ -506,7 +506,7 @@ When login succeeds, the API returns HTTP status `200 OK` with:
   // Logged-in captain object
   "captain": {
     "_id": "<captain-id>",
-    "FullName": { "FirstName": "John", "LastName": "Doe" },
+    "fullname": { "firstname": "John", "lastname": "Doe" },
     "email": "john@example.com",
     "vehicle": { "color": "blue", "plate": "ABC123", "capacity": 4, "vehicleType": "car" },
     "status": { "isActive": "inactive" },
@@ -566,9 +566,9 @@ When the request succeeds, the API returns HTTP status `200 OK` with the captain
 {
   "captain": {
     "_id": "<captain-id>",
-    "FullName": {
-      "FirstName": "John",
-      "LastName": "Doe"
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
     },
     "email": "john@example.com",
     "vehicle": {
@@ -591,11 +591,11 @@ When the request succeeds, the API returns HTTP status `200 OK` with the captain
   // Captain profile object returned for authenticated requests
   "captain": {
     "_id": "<captain-id>",
-    "FullName": {
-      // FirstName: string
-      "FirstName": "John",
-      // LastName: string
-      "LastName": "Doe"
+    "fullname": {
+      // firstname: string
+      "firstname": "John",
+      // lastname: string
+      "lastname": "Doe"
     },
     "email": "john@example.com",
     "vehicle": {

@@ -1,8 +1,7 @@
 const userModel = require("../models/users");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const blackListTokenModel=require('../models/blackListToken')
-const captainModel=require('../models/captains')
+const blackListTokenModel = require('../models/blackListToken');
+const captainModel = require('../models/captains');
 
 module.exports.authUser = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -38,7 +37,9 @@ module.exports.authUser = async (req, res, next) => {
 };
 
 module.exports.authCaptain = async (req, res, next) => {
-  const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+  const authHeader = req.headers.authorization;
+  const token = req.cookies?.token ||
+    (authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null);
 
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized token not valid' });
@@ -55,7 +56,6 @@ module.exports.authCaptain = async (req, res, next) => {
     const captain = await captainModel.findById(decoded._id);
 
     if (!captain) {
-      console.log(captain)
       return res.status(401).json({ message: 'Unauthorized captain not found' });
     }
     req.captain = captain;

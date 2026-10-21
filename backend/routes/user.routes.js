@@ -5,7 +5,7 @@ const userController=require('../controllers/user.controller')
 const authMiddleware=require('../middlewares/auth.middleware')
 
 router.post('/register', [
-    body("FullName.FirstName")
+    body("fullname.firstname")
       .trim()
       .notEmpty()
       .withMessage("First name is required")
@@ -13,7 +13,7 @@ router.post('/register', [
       .isLength({ min: 3 })
       .withMessage("First name must be at least 3 characters"),
 
-    body("FullName.LastName")
+    body("fullname.lastname")
       .optional({ values: "falsy" })//values: "falsy" already null, undefined, "", 0, aur false ko optional maanta hai, isliye
       .trim()
       .isLength({ min: 3 })
@@ -48,8 +48,8 @@ router.post('/register', [
       .withMessage("Password is required")
       .bail()
       .isLength({ min: 6 })
-      .withMessage("Password must contain at least 6 characters"),],userController.login)
+      .withMessage("Password must contain at least 6 characters"),],userController.loginUser)
 
-router.get('/profile',authMiddleware.authUser,userController.profile)
-router.get('/logout',authMiddleware.authUser,userController.loggedOut)
+router.get('/profile',authMiddleware.authUser,userController.getUserProfile)
+router.get('/logout',authMiddleware.authUser,userController.logoutUser)
 module.exports=router

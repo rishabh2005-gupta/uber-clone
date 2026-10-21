@@ -4,13 +4,13 @@ const jwt = require("jsonwebtoken");
 
 const captainsSchema = new mongoose.Schema(
   {
-    FullName: {
-      FirstName: {
+    fullname: {
+      firstname: {
         type: String,
         required: true,
         minlength: [3, "First name must be at least 3 Character"],
       },
-      LastName: {
+      lastname: {
         type: String,
         minlength: [3, "Last name must be at least 3 Character"],
       },
@@ -32,11 +32,13 @@ const captainsSchema = new mongoose.Schema(
       type: String,
     },
     location: {
-      latitude: {
+      type: {
         type: String,
+        enum: ["Point"],
       },
-      longitude: {
-        type: String,
+      coordinates: {
+        type: [Number],
+        default: undefined,
       },
     },
     status: {
@@ -67,8 +69,17 @@ const captainsSchema = new mongoose.Schema(
       },
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: {
+      transform: (_document, captain) => {
+        delete captain.password;
+        return captain;
+      },
+    },
+  },
 );
+captainsSchema.index({ location: "2dsphere" });
 
 captainsSchema.methods.generateAuthToken =function(){
   const token=jwt.sign({_id:this._id},process.env.JWT_SECRET,{expiresIn:'24h'})
@@ -81,6 +92,6 @@ captainsSchema.statics.hashPassword=async function(password){
   return await bcrypt.hash(password,10)
 }
 
-const captains = mongoose.model("captains", captainsSchema);
+const captains = mongoose.model("Captain", captainsSchema);
 
 module.exports = captains;
